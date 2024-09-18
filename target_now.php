@@ -115,9 +115,31 @@ try {
                 <div class="card-body">
                     <h3>ตั้งค่าเป้ายอดขาย</h3>
                     <h5>กรอกข้อมูล</h5>
+                    <?php
+                        if(isset($_SESSION['warning'])){?>
+                        <div class="alert alert-warning" role="alert">
+                            <?php
+                            echo $_SESSION['warning'];
+                            unset($_SESSION['warning']);
+                            ?>
+                        </div>
+                      <?php  } ?>
+
+                    <?php
+                        if(isset($_SESSION['success'])){?>
+                        <div class="alert alert-success" role="alert">
+                            <?php
+                            echo $_SESSION['success'];
+                            unset($_SESSION['success']);
+                            ?>
+                        </div>
+                      <?php  } ?>
+                    
+                    
                     <div class="container">
                         <form action="targetnow_db.php" method="post">
                             <div class="form-group row mt-3 col-sm-12">
+                                <input type="text" name="username_id" value="<?php echo $row['username_id']?>" hidden>
                                 <label for="" class="col-sm-1 col-form-label">ปี</label>
                                 <div class="col-sm-2">
                                     <select id="year" name="year" class="form-select w-50">

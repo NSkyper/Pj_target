@@ -1,4 +1,6 @@
-<?php session_start(); ?>
+<?php session_start();
+require '../config/db_connection.php';
+?>
 
 <!DOCTYPE html>
 <html lang="en">

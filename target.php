@@ -29,6 +29,30 @@ try {
     header('location: signin.php');
     exit();
 }
+
+
+
+// ดึงข้อมูลปี
+$yearsQuery = "SELECT DISTINCT target_year FROM target ORDER BY target_year DESC";
+$yearsResult = $conn->query($yearsQuery);
+$years = $yearsResult->fetchAll(PDO::FETCH_COLUMN);
+
+// ดึงข้อมูลสาขา
+$branchesQuery = "SELECT DISTINCT branch_name FROM branch ORDER BY branch_name";
+$branchesResult = $conn->query($branchesQuery);
+$branches = $branchesResult->fetchAll(PDO::FETCH_COLUMN);
+
+// รับค่าฟิลเตอร์ปีและสาขา
+$year_filter = isset($_POST['year_filter']) ? $_POST['year_filter'] : '';
+$branch_filter = isset($_POST['branch_filter']) ? $_POST['branch_filter'] : '';
+
+// Query สำหรับดึงข้อมูลยอดขาย
+$sql = "SELECT t.target_year, b.branch_name, t.target_month, t.target_amt AS target_amount
+        FROM target t
+        JOIN branch b ON t.branch_id = b.branch_id
+        ORDER BY t.target_year, t.target_month, b.branch_name";
+$result = $conn->query($sql);
+$sales_data = $result->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!doctype html>
 <html lang="en">
@@ -122,18 +146,127 @@ try {
                     </div>
                 </div>
             </div>
+            <button class="btn btn-success w-50 mt-2" onclick="toggleTable()">แสดง/ซ่อน ตารางยอดขาย</button>
+            <div id="filterContainer">
+                <label for="yearFilter">ปี:</label>
+                <select id="yearFilter" name="year_filter" onchange="filterTable()">
+                    <option value="">ทั้งหมด</option>
+                    <?php foreach ($years as $year): ?>
+                        <option value="<?php echo htmlspecialchars($year); ?>" <?php echo $year == $year_filter ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($year); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="branchFilter">สาขา:</label>
+                <select id="branchFilter" name="branch_filter" onchange="filterTable()">
+                    <option value="">ทั้งหมด</option>
+                    <?php foreach ($branches as $branch): ?>
+                        <option value="<?php echo htmlspecialchars($branch); ?>" <?php echo $branch == $branch_filter ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($branch); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <label for="monthFilter">เดือน:</label>
+                <select id="monthFilter" onchange="filterTable()">
+                    <option value="">ทั้งหมด</option>
+                    <?php
+                    $months = [
+                        "มกราคม",
+                        "กุมภาพันธ์",
+                        "มีนาคม",
+                        "เมษายน",
+                        "พฤษภาคม",
+                        "มิถุนายน",
+                        "กรกฎาคม",
+                        "สิงหาคม",
+                        "กันยายน",
+                        "ตุลาคม",
+                        "พฤศจิกายน",
+                        "ธันวาคม"
+                    ];
+                    foreach ($months as $index => $month):
+                    ?>
+                        <option value="<?php echo $index + 1; ?>"><?php echo $month; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <table id="salesTable" border="1" class="table table">
+                <thead>
+                    <tr>
+                        <th>ปี</th>
+                        <th>สาขา</th>
+                        <th>เดือน</th>
+                        <th>เป้ายอดขาย</th>
+                        <th>แก้ไข</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($sales_data as $row): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row['target_year']); ?></td>
+                            <td><?php echo htmlspecialchars($row['branch_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['target_month']); ?></td>
+                            <td><?php echo htmlspecialchars($row['target_amount']); ?></td>
+                            <td><a href="update.php?year=<?php echo urlencode($row['target_year']); ?>&branch_name=<?php echo urlencode($row['branch_name']); ?>&month=<?php echo urlencode($row['target_month']); ?>">แก้ไข</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 
 
+    <script>
+        function filterTable() {
+            var yearFilter = document.getElementById('yearFilter').value;
+            var branchFilter = document.getElementById('branchFilter').value;
+            var monthFilter = document.getElementById('monthFilter').value;
+
+            var table = document.getElementById('salesTable');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (var i = 0; i < rows.length; i++) {
+                var cells = rows[i].getElementsByTagName('td');
+                var year = cells[0].textContent || cells[0].innerText;
+                var branch = cells[1].textContent || cells[1].innerText;
+                var month = cells[2].textContent || cells[2].innerText;
+
+                var showRow = true;
+
+                if (yearFilter && year !== yearFilter) {
+                    showRow = false;
+                }
+                if (branchFilter && branch !== branchFilter) {
+                    showRow = false;
+                }
+                if (monthFilter && month !== monthFilter) {
+                    showRow = false;
+                }
+
+                rows[i].style.display = showRow ? '' : 'none';
+            }
+        }
+
+        function toggleTable() {
+            var table = document.getElementById('salesTable');
+            // เช็คสถานะการแสดงผลปัจจุบันและเปลี่ยนแปลง
+            if (table.style.display === 'none' || table.style.display === '') {
+                table.style.display = 'table';
+            } else {
+                table.style.display = 'none';
+            }
+        }
+    </script>
 
 
-
-    <b
+    <script
         src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous">
-    </b>
+    </script>
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"

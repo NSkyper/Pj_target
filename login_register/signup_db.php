@@ -12,7 +12,7 @@ if (isset($_POST['signup'])) {
     $branch_id = $_POST['branch_id']; // เพิ่มค่าจากฟอร์ม
     $areazone_id = $_POST['areazone_id']; // เพิ่มค่าจากฟอร์ม
     $department_id = $_POST['department_id']; // เพิ่มค่าจากฟอร์ม
-    $role_id = 'user'; // หรือค่าที่ต้องการ
+    $role_id = '5'; // หรือค่าที่ต้องการ
 
     // ตรวจสอบความถูกต้องของข้อมูล
     if (empty($username)) {

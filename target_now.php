@@ -116,7 +116,7 @@ try {
                     <h3>ตั้งค่าเป้ายอดขาย</h3>
                     <h5>กรอกข้อมูล</h5>
                     <div class="container">
-                        <form action="#" method="post">
+                        <form action="targetnow_db.php" method="post">
                             <div class="form-group row mt-3 col-sm-12">
                                 <label for="" class="col-sm-1 col-form-label">ปี</label>
                                 <div class="col-sm-2">
@@ -128,13 +128,13 @@ try {
                                 </div>
                                 <label for="" class="col-sm-2 col-form-label">AreaZones</label>
                                 <div class="col-sm-3">
-                                    <select id="year" name="year" class="form-select w-50">
+                                    <select id="areazone" name="areazone" class="form-select w-50">
                                         <option value="AreaZone 1">AreaZone 1</option>
                                     </select>
                                 </div>
                                 <label for="" class="col-sm-1 col-form-label">สาขา</label>
                                 <div class="col-sm-3">
-                                    <select id="year" name="year" class="form-select w-50">
+                                    <select id="branch" name="branch" class="form-select w-50">
                                         <option value="Pinklao">Pinklao</option>
                                     </select>
                                 </div>
@@ -200,10 +200,10 @@ try {
                                 </tr>
                             </table>
                             <div class="container">
-                                <p>ยอดรวมเป้าหมายยอดขายรายปี: <span id="total-target">0</span></p>
+                                <p>ยอดรวมเป้าหมายยอดขายรายปี: <span id="total-target" name="total-target">0</span></p>
                             </div>
                             <button class="btn btn-danger w-100">ยกเลิก</button>
-                            <button class="btn btn-success w-100 mt-2">บันทึก</button>
+                            <button type="submit" name="save_target" class="btn btn-success w-100 mt-2">บันทึก</button>
                         </form>
                     </div>
                 </div>

@@ -33,7 +33,7 @@
             <?php } ?>
             <div class="mb-3">
                 <label for="username" class="form-label">username</label>
-                <input type="username" class="form-control" name="username" aria-describedby="username">
+                <input type="username" class="form-control" name="username_id" aria-describedby="username_id">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

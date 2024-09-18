@@ -24,6 +24,27 @@ if(isset($_POST['save_target'])){
     if(empty($year)){
         $_SESSION['error'] = 'กรุณาเลือกปี';
         header('location: target_now.php');
+    }else if(empty($areazone)){
+        $_SESSION['error'] = 'กรุณาareazone';
+        header('location: target_now.php');
+    }else if(empty($branch)){
+        $_SESSION['error'] = 'กรุณาbranch';
+        header('location: target_now.php');
+    }else if(empty($annual_target)){
+        $_SESSION['error'] = 'กรุณากรอกเป้าหมาย';
+        header('location: target_now.php');
+    }else{
+        try{
+
+            $check_user = $conn->prepare("SELECT * FROM users WHERE username_id = :username_id");
+            $check_user->bindParam(":username_id",$username_id);
+            $check_user->execute();
+            $row = $check_user->fetch(PDO::FETCH_ASSOC);
+
+
+        }catch(PDOException $e){
+            echo $e->getMessage();
+        }
     }
 }
 

@@ -1,12 +1,11 @@
 <?php
 session_start();
-require_once '../config/db_connection.php';
-
+require '../config/db_connection.php';
 if (isset($_POST['signin'])) {
-    $username = $_POST['username'];
+    $username_id = $_POST['username_id'];
     $password = $_POST['password'];
 
-    if (empty($username) || empty($password)) {
+    if (empty($username_id) || empty($password)) {
         $_SESSION['error'] = 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน';
         header("location: signin.php");
         exit();
@@ -14,17 +13,16 @@ if (isset($_POST['signin'])) {
 
     try {
         $check_data = $conn->prepare("SELECT * FROM users WHERE username_id = :username_id");
-        $check_data->bindParam(":username_id", $username);
+        $check_data->bindParam(":username_id", $username_id);
         $check_data->execute();
         $row = $check_data->fetch(PDO::FETCH_ASSOC);
-
         if ($row) {
             // ตรวจสอบรหัสผ่าน
             if (password_verify($password, $row['password'])) {
                 if ($row['role_id'] == 'admin') {
                     $_SESSION['admin_login'] = $row['username_id'];
                     header("location: admin.php");
-                } else if ($row['role_id'] == 'user') {
+                } else if ($row['role_id'] == '5') {
                     $_SESSION['user_login'] = $row['username_id'];
                     // header("location: user.php");
                     header("location: ../target.php");
@@ -40,7 +38,7 @@ if (isset($_POST['signin'])) {
                 } else if ($row['role_id'] == 'areazone') {
                     $_SESSION['areazone_login'] = $row['username_id'];
                     header("location: areazone.php");
-                } 
+                }
                 exit();
             } else {
                 $_SESSION['error'] = 'รหัสผ่านผิด';
@@ -57,4 +55,3 @@ if (isset($_POST['signin'])) {
         exit();
     }
 }
-?>
